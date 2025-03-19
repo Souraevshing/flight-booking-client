@@ -1,138 +1,146 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Airline, StopType, DepartureTime } from "@/lib/types/flights"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Airline, DepartureTime, StopType } from "@/lib/types/flights";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function FlightFilters({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Price range
-  const [priceRange, setPriceRange] = useState<[number, number]>([200, 1000])
+  const [priceRange, setPriceRange] = useState<[number, number]>([200, 1000]);
 
   // Airlines
   const [selectedAirlines, setSelectedAirlines] = useState<{
-    [key in Airline]?: boolean
+    [key in Airline]?: boolean;
   }>({
     [Airline.DELTA]: false,
     [Airline.UNITED]: false,
     [Airline.AMERICAN]: false,
     [Airline.SPIRIT]: false,
     [Airline.JET_BLUE]: false,
-  })
+  });
 
   // Stops
   const [stops, setStops] = useState<{
-    [key in StopType]?: boolean
+    [key in StopType]?: boolean;
   }>({
     [StopType.DIRECT]: false,
     [StopType.ONE_STOP]: false,
     [StopType.MULTI_STOP]: false,
-  })
+  });
 
   // Departure times
   const [departureTimes, setDepartureTimes] = useState<{
-    [key in DepartureTime]?: boolean
+    [key in DepartureTime]?: boolean;
   }>({
     [DepartureTime.MORNING]: false,
     [DepartureTime.AFTERNOON]: false,
     [DepartureTime.EVENING]: false,
-  })
+  });
 
   // Apply filters
   const applyFilters = () => {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams();
 
     // Add existing search params
     Object.entries(searchParams).forEach(([key, value]) => {
       if (typeof value === "string") {
-        params.append(key, value)
+        params.append(key, value);
       } else if (Array.isArray(value)) {
-        value.forEach((v) => params.append(key, v))
+        value.forEach((v) => params.append(key, v));
       }
-    })
+    });
 
     // Add price range
-    params.set("minPrice", priceRange[0].toString())
-    params.set("maxPrice", priceRange[1].toString())
+    params.set("minPrice", priceRange[0].toString());
+    params.set("maxPrice", priceRange[1].toString());
 
-    // Add airlines
     const selectedAirlinesList = Object.entries(selectedAirlines)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .filter(([_, selected]) => selected)
-      .map(([airline]) => airline)
+      .map(([airline]) => airline);
 
     if (selectedAirlinesList.length > 0) {
-      params.set("airlineList", JSON.stringify(selectedAirlinesList))
+      params.set("airlineList", JSON.stringify(selectedAirlinesList));
     }
 
-    // Add stops
     const stopsFilter = {
       direct: stops[StopType.DIRECT] || false,
       oneStop: stops[StopType.ONE_STOP] || false,
       multiStop: stops[StopType.MULTI_STOP] || false,
-    }
+    };
 
     if (Object.values(stopsFilter).some(Boolean)) {
-      params.set("stops", JSON.stringify(stopsFilter))
+      params.set("stops", JSON.stringify(stopsFilter));
     }
-
-    // Add departure times
     const departureTimeFilter = {
       morning: departureTimes[DepartureTime.MORNING] || false,
       afternoon: departureTimes[DepartureTime.AFTERNOON] || false,
       evening: departureTimes[DepartureTime.EVENING] || false,
-    }
+    };
 
     if (Object.values(departureTimeFilter).some(Boolean)) {
-      params.set("departureTime", JSON.stringify(departureTimeFilter))
+      params.set("departureTime", JSON.stringify(departureTimeFilter));
     }
 
-    router.push(`${pathname}?${params.toString()}`)
-  }
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
-  // Reset filters
   const resetFilters = () => {
-    setPriceRange([200, 1000])
+    setPriceRange([200, 1000]);
     setSelectedAirlines({
       [Airline.DELTA]: false,
       [Airline.UNITED]: false,
       [Airline.AMERICAN]: false,
       [Airline.SPIRIT]: false,
       [Airline.JET_BLUE]: false,
-    })
+    });
     setStops({
       [StopType.DIRECT]: false,
       [StopType.ONE_STOP]: false,
       [StopType.MULTI_STOP]: false,
-    })
+    });
     setDepartureTimes({
       [DepartureTime.MORNING]: false,
       [DepartureTime.AFTERNOON]: false,
       [DepartureTime.EVENING]: false,
-    })
+    });
 
     // Keep only the basic search params
-    const basicParams = new URLSearchParams()
-    ;["from", "to", "departureDate", "returnDate", "passengers", "cabinClass", "tripType"].forEach((param) => {
-      const value = searchParams[param]
+    const basicParams = new URLSearchParams();
+    [
+      "from",
+      "to",
+      "departureDate",
+      "returnDate",
+      "passengers",
+      "cabinClass",
+      "tripType",
+    ].forEach((param) => {
+      const value = searchParams[param];
       if (value) {
-        basicParams.set(param, Array.isArray(value) ? value[0] : value)
+        basicParams.set(param, Array.isArray(value) ? value[0] : value);
       }
-    })
+    });
 
-    router.push(`${pathname}?${basicParams.toString()}`)
-  }
+    router.push(`${pathname}?${basicParams.toString()}`);
+  };
 
   return (
     <Card className="sticky top-4">
@@ -140,7 +148,10 @@ export default function FlightFilters({
         <CardTitle>Filters</CardTitle>
       </CardHeader>
       <CardContent>
-        <Accordion type="multiple" defaultValue={["price", "airlines", "stops", "departure"]}>
+        <Accordion
+          type="multiple"
+          defaultValue={["price", "airlines", "stops", "departure"]}
+        >
           <AccordionItem value="price">
             <AccordionTrigger>Price Range</AccordionTrigger>
             <AccordionContent>
@@ -151,7 +162,9 @@ export default function FlightFilters({
                   max={2000}
                   step={50}
                   value={priceRange}
-                  onValueChange={(value) => setPriceRange(value as [number, number])}
+                  onValueChange={(value) =>
+                    setPriceRange(value as [number, number])
+                  }
                 />
                 <div className="flex justify-between">
                   <span>${priceRange[0]}</span>
@@ -289,6 +302,5 @@ export default function FlightFilters({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-
