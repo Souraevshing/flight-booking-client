@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import type { Flight } from "@/lib/types/flights";
 import { Clock, Plane } from "lucide-react";
+import { toast } from "sonner";
 
 async function getFlights(searchParams: URLSearchParams): Promise<Flight[]> {
   const response = await fetch(
@@ -16,9 +17,11 @@ async function getFlights(searchParams: URLSearchParams): Promise<Flight[]> {
   );
 
   if (!response.ok) {
+    toast.error("Failed to fetch flights");
     throw new Error("Failed to fetch flights");
   }
 
+  toast.success("Flights fetched successfully");
   return response.json();
 }
 
