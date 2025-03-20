@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { getSession } from "@/lib/auth";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -27,7 +28,7 @@ const users = [
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   const session = await getSession();
 
@@ -39,7 +40,7 @@ export async function PATCH(
   }
 
   // Check if user is updating their own profile or is an admin
-  if (session.user.id !== params.id && session.user.role !== "admin") {
+  if (session.user.id !== context.params.id && session.user.role !== "admin") {
     return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
   }
 
@@ -47,7 +48,7 @@ export async function PATCH(
     const userData = await request.json();
 
     // Find user
-    const userIndex = users.findIndex((u) => u.id === params.id);
+    const userIndex = users.findIndex((u) => u.id === context.params.id);
 
     if (userIndex === -1) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
@@ -61,7 +62,7 @@ export async function PATCH(
     };
 
     // Return updated user (excluding password)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { password, ...userWithoutPassword } = users[userIndex];
     return NextResponse.json(userWithoutPassword);
   } catch (error) {
