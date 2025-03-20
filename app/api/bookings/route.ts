@@ -93,7 +93,7 @@ const mockBookings: BookingDto[] = [
   },
 ];
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const session = await getSession();
 
   if (!session) {

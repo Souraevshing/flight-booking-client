@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import type { Flight } from "@/lib/types/flights";
 import { Clock, Plane } from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
 
 async function getFlights(searchParams: URLSearchParams): Promise<Flight[]> {
@@ -78,7 +79,7 @@ function FlightCard({
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-              <img
+              <Image
                 src={flight.airlineLogo || "/placeholder.svg"}
                 alt={flight.airline}
                 className="w-6 h-6"

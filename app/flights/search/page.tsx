@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import FlightFilters from "@/components/flight-filters";
 import FlightResults from "@/components/flight-results";
 import { Skeleton } from "@/components/ui/skeleton";
