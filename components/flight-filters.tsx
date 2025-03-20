@@ -25,7 +25,6 @@ export default function FlightFilters({
 
   const [priceRange, setPriceRange] = useState<[number, number]>([200, 1000]);
 
-  // Airlines
   const [selectedAirlines, setSelectedAirlines] = useState<{
     [key in Airline]?: boolean;
   }>({
@@ -36,7 +35,6 @@ export default function FlightFilters({
     [Airline.JET_BLUE]: false,
   });
 
-  // Stops
   const [stops, setStops] = useState<{
     [key in StopType]?: boolean;
   }>({
@@ -45,7 +43,6 @@ export default function FlightFilters({
     [StopType.MULTI_STOP]: false,
   });
 
-  // Departure times
   const [departureTimes, setDepartureTimes] = useState<{
     [key in DepartureTime]?: boolean;
   }>({
@@ -54,11 +51,9 @@ export default function FlightFilters({
     [DepartureTime.EVENING]: false,
   });
 
-  // Apply filters
   const applyFilters = () => {
     const params = new URLSearchParams();
 
-    // Add existing search params
     Object.entries(searchParams).forEach(([key, value]) => {
       if (typeof value === "string") {
         params.append(key, value);
@@ -67,7 +62,6 @@ export default function FlightFilters({
       }
     });
 
-    // Add price range
     params.set("minPrice", priceRange[0].toString());
     params.set("maxPrice", priceRange[1].toString());
 
@@ -122,7 +116,6 @@ export default function FlightFilters({
       [DepartureTime.EVENING]: false,
     });
 
-    // Keep only the basic search params
     const basicParams = new URLSearchParams();
     [
       "from",

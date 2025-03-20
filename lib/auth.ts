@@ -14,7 +14,6 @@ export type Session = {
   user: SessionUser;
 };
 
-// This function would normally interact with your auth provider (e.g., Supabase)
 export async function getSession(): Promise<Session | null> {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get("session");
@@ -47,9 +46,9 @@ export async function requireAuth() {
 export async function requireAdmin() {
   const session = await getSession();
 
-  if (!session) {
-    redirect("/login");
-  }
+  // if (!session) {
+  //   redirect("/login");
+  // }
 
   if (session.user.role !== USER_ROLE.ADMIN) {
     redirect("/dashboard");
